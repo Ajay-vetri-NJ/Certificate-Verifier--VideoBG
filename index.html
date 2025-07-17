@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VaultofCodes - Certificate Verifier</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('IMG1.jpg') no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden;
+    }
+
+    /* Background Video */
+    #bgVideo {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -100;
+    }
+
+    /* Header */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      padding: 30px 15px;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-logo {
+      height: 55px;
+    }
+
+    .brand-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Container */
+    .container {
+      max-width: 500px;
+      margin: 12vh auto;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+      margin-top: 12%;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #6a5acd;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(to right, #6a5acd, #1e90ff);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.03);
+      background: linear-gradient(to right, #1e90ff, #6a5acd);
+    }
+
+    .card {
+      margin-top: 30px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .card img {
+      display: block;
+      margin: 0 auto 20px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .assignment-status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .assignment-status span {
+      background-color: #eef1f9;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .card a {
+      display: block;
+      margin-top: 15px;
+      color: #007bff;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    .spinner {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #1e90ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .toast {
+      visibility: hidden;
+      min-width: 220px;
+      background: #222;
+      color: #fff;
+      padding: 14px;
+      text-align: center;
+      border-radius: 6px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      z-index: 999;
+      transition: opacity 0.5s, bottom 0.5s;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+      bottom: 50px;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .brand-title { font-size: 24px; }
+      .container { margin: 20px; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔥 Background Video (Hidden Initially) -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 🔰 Header -->
+  <header class="brand-header">
+    <img src="https://th.bing.com/th/id/OIP.eaGekSLNJALGp4E8M5WHcAHaHa?w=170&h=180&c=7&r=0&o=7&pid=1.7&rm=3" class="brand-logo" alt="Vault Logo" />
+    <h1 class="brand-title">VaultofCodes</h1>
+  </header>
+
+  <!-- 💡 Input Form -->
+  <main>
+    <div class="container">
+      <input id="identifier" type="text" placeholder="Enter Email or ID" />
+      <button onclick="verifyStudent()">Verify</button>
+      <div id="result"></div>
+      <div class="spinner hidden"></div>
+    </div>
+  </main>
+
+  <!-- ✅ Toast Message -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ✅ Script -->
+  <script>
+    function verifyStudent() {
+      const id = document.getElementById("identifier").value.trim();
+      const resultBox = document.getElementById("result");
+
+      if (!id) return alert("Please enter a valid Email or ID");
+
+      showSpinner(true);
+
+      setTimeout(() => {
+        const student = {
+          name: "Spidey",
+          email: "spider@web.com",
+          mobile: "9876543210",
+          domain: "Web Development",
+          college: "Marvel University",
+          start: "01 June 2024",
+          duration: "1 Month",
+          photo: "https://cdn.pixabay.com/photo/2023/05/16/04/39/ai-generated-7996493_1280.jpg",
+          assignments: [true, false, true, true],
+          certificate: "#"
+        };
+
+        resultBox.innerHTML = `
+          <div class="card">
+            <img src="${student.photo}" alt="Student Photo" />
+            <h3>${student.name}</h3>
+            <p>Email: ${student.email}</p>
+            <p>Mobile: ${student.mobile}</p>
+            <p>Domain: ${student.domain}</p>
+            <p>College: ${student.college}</p>
+            <p>Start Date: ${student.start}</p>
+            <p>Duration: ${student.duration}</p>
+            <h4>Assignment Status:</h4>
+            <div class="assignment-status">
+              ${student.assignments.map((done, i) => `<span>A${i+1}: ${done ? "✅" : "❌"}</span>`).join("")}
+            </div>
+            <a href="${student.certificate}" target="_blank">View Certificate</a>
+          </div>
+        `;
+
+        showSpinner(false);
+        showToast("✅ Dummy student data loaded.");
+
+        // Switch background from image to video
+        document.body.style.background = "none";
+        document.getElementById("bgVideo").style.display = "block";
+        document.getElementById("bgVideo").play();
+      }, 1200);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.innerText = message;
+      toast.className = "toast show";
+      setTimeout(() => toast.className = "toast", 3000);
+    }
+
+    function showSpinner(show) {
+      document.querySelector(".spinner").classList.toggle("hidden", !show);
+    }
+  </script>
+
+</body>
+</html>
